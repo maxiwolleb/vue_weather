@@ -1,28 +1,40 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <div>
+      <input type="text" name id class="search-box" placeholder="Search..." v-on:keyup.enter="fetchWeather()" v-model="query" />
+    </div>
+    <div>
+      <div class="location">{{ city }}</div>
+      <div class="temperature">{{ temperature }}</div>
+      <div class="forcast">{{ condition }}</div>
+    </div>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
 export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  }
-}
+  name: "App",
+  components: {},
+  data() {
+    return {
+      query: "",
+      api_key: process.env.VUE_APP_API_KEY,
+      temperature: "",
+      city: "",
+      condition: "",
+    };
+  },
+  methods: {
+    fetchWeather() {
+      this.$axios.get("https://api.openweathermap.org/data/2.5/weather?q=" + this.query + "&appid=" + this.api_key).then((data) => {
+        data = data.data;
+        this.temperature = Math.round((data.main.temp - 273.15) * 10) / 10 + " °C";
+        this.city = data.name + ", " + data.sys.country;
+        this.condition = data.weather[0].description;
+      });
+    },
+  },
+};
 </script>
-
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
+M
+<style lang="sass" scoped></style>>
